@@ -1,0 +1,6 @@
+Flask
+docker
+bootstrap-flask
+WTForms
+Flask-WTF
+requests

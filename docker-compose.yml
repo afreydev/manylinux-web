@@ -1,0 +1,30 @@
+version: '2'
+
+networks:
+    manylinux_network:
+
+services:
+    pypi:
+        image: pypiserver/pypiserver
+        ports:
+            - 8080:8080
+        volumes:
+            - ./packages:/data/packages
+            - ./etc/pypiserver/.htpasswd:/data/.htpasswd
+        command: -P .htpasswd --overwrite packages
+        networks:
+            - manylinux_network
+    web-docker:
+        image: web-docker
+        build: web
+        ports:
+            - 5000:5000
+        environment: 
+            - FLASK_ENV=development
+            - FLASK_APP=server.py
+        volumes:
+            - ./web:/opt/app
+            - /var/run/docker.sock:/var/run/docker.sock
+        command: flask run --host=0.0.0.0
+        networks:
+            - manylinux_network
