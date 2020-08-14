@@ -28,6 +28,7 @@ def index():
     form = BuildForm()
     if form.validate_on_submit():
         container_name = manylinux.create_container_many_linux()
+        time.sleep(10)
         settings = {
             "git": form.git.data,
             "versions": manylinux.get_versions(form)
