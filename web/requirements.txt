@@ -4,3 +4,7 @@ bootstrap-flask
 WTForms
 Flask-WTF
 requests
+celery[redis]
+flower
+python-decouple
+pymysql

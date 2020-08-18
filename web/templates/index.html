@@ -26,6 +26,12 @@
             <img src="{{ url_for('static', filename='img/python-logo.png') }}" class="img-fluid w-25 p-3"
                 alt="python-logo">
         </div>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="navbar-nav mr-auto">
+                {{ render_nav_item('index', 'Home') }}
+                {{ render_nav_item('tasks', 'Tasks') }}
+            </div>
+        </nav>
         <div class="row">
             <div class="col">
                 <h2>Manylinux settings</h2>
@@ -37,6 +43,8 @@
                     {{ form.csrf_token }}
                     {{ render_form_row([form.git]) }}
                     {{ render_form_row([form.python36, form.python37]) }}
+                    <br>
+                    {{ render_form_row([form.async_build]) }}
                     {{ render_form_row([form.submit]) }}
                 </form>
             </div>

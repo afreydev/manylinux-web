@@ -1,0 +1,88 @@
+{% from 'bootstrap/nav.html' import render_nav_item %}
+{% from 'bootstrap/form.html' import render_form_row %}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    {% block head %}
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {% block styles %}
+    <!-- Bootstrap CSS -->
+    {{ bootstrap.load_css() }}
+    {% endblock %}
+
+    <title>Manylinux - Magic builder</title>
+    {% endblock %}
+</head>
+
+<body>
+    {% block content %}
+    <div class="container">
+        <div class="text-center">
+            <img src="{{ url_for('static', filename='img/python-logo.png') }}" class="img-fluid w-25 p-3"
+                alt="python-logo">
+        </div>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="navbar-nav mr-auto">
+                {{ render_nav_item('index', 'Home') }}
+                {{ render_nav_item('tasks', 'Tasks') }}
+            </div>
+        </nav>
+        <div class="row">
+            <div class="col">
+                <h2>Building tasks</h2>
+            </div>
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <br>
+        <div class="row">
+            <div class="col">
+                {% for category, message in messages %}
+                    {% if category == "MES" %}
+                    <div class="alert alert-success" role="alert">{{ message }}</div>
+                    {% else %}
+                    <div class="alert alert-warning" role="alert">{{ message }}</div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% endwith %}
+        <div class="row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Settings</th>
+                        <th scope="col">Created at</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                    <tr>
+                        <th scope="row">{{ task.task_id }}</th>
+                        <td>
+                            <pre id="json">{{ task.settings|tojson_pretty }}</pre>
+                        </td>
+                        <td>{{ task.created_at }}</td>
+                        <td>{{ get_result(task.task_id)}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endblock %}
+
+    {% block scripts %}
+    {{ bootstrap.load_js() }}
+    {% endblock %}
+</body>
+
+</html>

@@ -19,12 +19,42 @@ services:
         build: web
         ports:
             - 5000:5000
-        environment: 
-            - FLASK_ENV=development
-            - FLASK_APP=server.py
+        env_file: 
+            - .env
+        depends_on: 
+            - redis
+            - mysql
         volumes:
             - ./web:/opt/app
             - /var/run/docker.sock:/var/run/docker.sock
         command: flask run --host=0.0.0.0
+        networks:
+            - manylinux_network
+    redis:
+        image: redis
+        ports:
+            - 6379:6379
+        networks:
+            - manylinux_network
+    celery:
+        image: web-docker
+        env_file: 
+            - .env
+        depends_on: 
+            - redis
+            - mysql
+        volumes:
+            - ./web:/opt/app
+            - /var/run/docker.sock:/var/run/docker.sock
+        command: celery -A server.celery worker --loglevel=info
+        networks:
+            - manylinux_network
+    mysql:
+        image: mariadb:10.1
+        env_file: 
+            - .env
+        volumes:
+            - ./data/mysql:/var/lib/mysql
+        env_file: .env
         networks:
             - manylinux_network

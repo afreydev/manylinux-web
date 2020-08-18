@@ -22,8 +22,20 @@ def build_wheels(settings, server):
         "http://{}:5000/run".format(server),
         json=settings
     )
-    for m in r.json():
-        flash(m["message"], m["type"])
+    return r
+
+def messages(response, flash_messages=True):
+    messages = []
+    if flash_messages:
+        for m in response.json():
+            flash(m["message"], m["type"])
+    else:
+        for m in response.json():
+            messages.append({
+                "message": m["message"]
+            })
+    return messages
+
 
 
 def create_container_many_linux():

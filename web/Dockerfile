@@ -34,7 +34,7 @@ RUN add-apt-repository \
 # for docker
 RUN apt-get update && apt-get install -y \ 
     apt-transport-https ca-certificates \
-    gnupg-agent \
+    gnupg-agent iputils-ping \
     docker-ce docker-ce-cli containerd.io && \
     # cleanup apt caches to keep image small
     rm -rf /var/lib/apt/lists/*

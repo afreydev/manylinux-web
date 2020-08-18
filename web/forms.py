@@ -6,6 +6,7 @@ class BuildForm(FlaskForm):
     git = StringField('Git repo', [validators.Length(min=20, max=255)])
     python36 = BooleanField('Python 3.6', default=False)
     python37 = BooleanField('Python 3.7', default=False)
+    async_build = BooleanField('Async build', [validators.Optional()], default=False)
     submit = SubmitField('Build')
 
     def validate(self):
