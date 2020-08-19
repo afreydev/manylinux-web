@@ -36,6 +36,10 @@ services:
             - 6379:6379
         networks:
             - manylinux_network
+        volumes:
+            - ./data/redis:/data
+
+        command: redis-server --appendonly yes
     celery:
         image: web-docker
         env_file: 

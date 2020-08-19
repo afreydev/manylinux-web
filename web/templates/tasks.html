@@ -43,39 +43,51 @@
         <div class="row">
             <div class="col">
                 {% for category, message in messages %}
-                    {% if category == "MES" %}
-                    <div class="alert alert-success" role="alert">{{ message }}</div>
-                    {% else %}
-                    <div class="alert alert-warning" role="alert">{{ message }}</div>
-                    {% endif %}
+                {% if category == "MES" %}
+                <div class="alert alert-success" role="alert">{{ message }}</div>
+                {% else %}
+                <div class="alert alert-warning" role="alert">{{ message }}</div>
+                {% endif %}
                 {% endfor %}
             </div>
         </div>
         {% endif %}
         {% endwith %}
         <div class="row">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Settings</th>
-                        <th scope="col">Created at</th>
-                        <th scope="col">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for task in tasks %}
-                    <tr>
-                        <th scope="row">{{ task.task_id }}</th>
-                        <td>
-                            <pre id="json">{{ task.settings|tojson_pretty }}</pre>
-                        </td>
-                        <td>{{ task.created_at }}</td>
-                        <td>{{ get_result(task.task_id)}}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="table-responsive-sm">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Settings</th>
+                            <th scope="col">Result</th>
+                            <th scope="col">Created at</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                        <tr>
+                            <th scope="row">{{ task.task_id }}</th>
+                            <td>
+                                <ul>
+                                <li>git: {{ get_settings(task.settings).git }}</li>
+                                <li>versions: {{ get_settings(task.settings).versions }}</li>
+                                </ul>
+                            </td>
+                            <td><ol>
+                                {% for message in get_result(task.task_id) %}
+                                    <li>{{ message.message }}</li>
+                                {% endfor %}
+                                </ol>
+                            </td>
+                            <td>{{ task.created_at }}</td>
+                            <td>{{ get_status(task.task_id)}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     {% endblock %}

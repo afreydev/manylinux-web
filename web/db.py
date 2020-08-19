@@ -31,6 +31,21 @@ def create_table(app):
     finally:
         conn.close()
 
+def truncate_table(app):
+    conn = get_connection(app)
+    cursor = conn.cursor()
+    try:
+        sql = """
+        TRUNCATE TABLE tasks
+        """
+        cursor.execute(sql)
+        conn.commit()
+        return True
+    except:
+        return False
+    finally:
+        conn.close()
+
 def create_task(app, settings, task_id):
     conn = get_connection(app)
     cursor = conn.cursor()

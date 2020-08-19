@@ -2,6 +2,8 @@ import os
 import sys
 import shutil
 import subprocess
+import time
+import json
 from flask import (
     Flask,
     request,
@@ -18,9 +20,8 @@ from celery_app import make_celery
 from celery.result import AsyncResult
 import manylinux
 import docker
-import time
 import db
-import json
+
 
 app = Flask(__name__)
 
@@ -49,10 +50,12 @@ def index():
             "git": form.git.data,
             "versions": manylinux.get_versions(form)
         }
+
         if form.async_build.data:
+            # When the user select an async build it create a celery task
             task = build_task.delay(settings, False)
             db.create_task(app, settings, task.id)
-            flash("Wait a moment for {} task".format(task.id), "MES")
+            flash("Wait a moment for task: {}".format(task.id), "MES")
             return redirect(url_for('tasks'))
         else:
             build(settings, True)
@@ -70,14 +73,18 @@ def tasks():
 
 @app.route('/management', methods=['GET'])
 def management():
+    # This route is only for creating the table to track the async tasks
     task = request.args.get('task', default="")
     token = request.args.get('token', default="")
     if task == "create-table" and token == app.config["MANAGEMENT_TOKEN"]:
         return str(db.create_table(app))
+    elif task == "truncate-table" and token == app.config["MANAGEMENT_TOKEN"]:
+        return str(db.truncate_table(app))
 
 
 def build(settings, flash):
     container_name = manylinux.create_container_many_linux()
+    # TODO: Improve container creation sync
     time.sleep(10)
     response = manylinux.build_wheels(settings, container_name)
     m = manylinux.messages(response, flash)
@@ -85,9 +92,20 @@ def build(settings, flash):
     return m
 
 
-def get_result(task_id):
+def get_status(task_id):
     task = AsyncResult(task_id)
     return task.state
+
+
+def get_result(task_id):
+    task = AsyncResult(task_id)
+    if task.result is None:
+        return []
+    return task.result
+
+
+def get_settings(settings_text):
+    return json.loads(settings_text.replace("'","\""))
 
 
 def to_pretty_json(value):
@@ -97,8 +115,11 @@ def to_pretty_json(value):
 
 @celery.task()
 def build_task(settings, flash):
+    # This wraps the build function
     return build(settings, flash)
 
 
 app.jinja_env.filters['tojson_pretty'] = to_pretty_json
+app.add_template_global(get_settings, name='get_settings')
 app.add_template_global(get_result, name='get_result')
+app.add_template_global(get_status, name='get_status')
