@@ -5,7 +5,11 @@ import random
 from flask import flash
 
 MANYLINUX_NETWORK = "manylinux-web_manylinux_network"
-MANYLINUNX_IMAGE = "many_local"
+manylinux_versions = {
+    "2010": "many_local",
+    "2014": "many_local_2014"
+}
+
 
 
 def get_versions(form):
@@ -44,13 +48,13 @@ def messages(response, flash_messages=True):
     return messages
 
 
-def create_container_many_linux():
+def create_container_many_linux(settings):
     client = docker.from_env()
     container_name = "manylinux_{}".format(str(random.randint(0, 10000)))
     # Create a new manylinux container with a random name
     # TODO: Improve docker network discovering
     container = client.containers.run(
-        MANYLINUNX_IMAGE,
+        manylinux_versions[settings["manylinux_version"]],
         environment=["FLASK_ENV=development"],
         network=MANYLINUX_NETWORK,
         detach=True,

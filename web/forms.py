@@ -1,12 +1,15 @@
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, StringField, SubmitField, validators
+from wtforms import BooleanField, StringField, SubmitField, SelectField, validators
 
 
 class BuildForm(FlaskForm):
     git = StringField('Git repo', [validators.Length(min=20, max=255)])
     python36 = BooleanField('Python 3.6', default=False)
     python37 = BooleanField('Python 3.7', default=False)
-    async_build = BooleanField('Async build', [validators.Optional()], default=False)
+    manylinux_version = SelectField('Manylinux version', choices=[
+                                    ('2010', '2010'), ('2014', '2014')])
+    async_build = BooleanField(
+        'Async build', [validators.Optional()], default=False)
     submit = SubmitField('Build')
 
     def validate(self):

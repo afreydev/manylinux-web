@@ -1,6 +1,6 @@
-FROM quay.io/pypa/manylinux2010_x86_64
+FROM quay.io/pypa/manylinux2014_x86_64
 
-ENV PLAT manylinux2010_x86_64
+ENV PLAT manylinux2014_x86_64
 ENV FLASK_APP=/opt/webserver/server.py
 
 # Creating a venv for python packages

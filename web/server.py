@@ -48,7 +48,8 @@ def index():
     if form.validate_on_submit():
         settings = {
             "git": form.git.data,
-            "versions": manylinux.get_versions(form)
+            "versions": manylinux.get_versions(form),
+            "manylinux_version": form.manylinux_version.data
         }
 
         if form.async_build.data:
@@ -83,7 +84,7 @@ def management():
 
 
 def build(settings, flash):
-    container_name = manylinux.create_container_many_linux()
+    container_name = manylinux.create_container_many_linux(settings)
     # TODO: Improve container creation sync
     time.sleep(10)
     response = manylinux.build_wheels(settings, container_name)
