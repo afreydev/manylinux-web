@@ -1,5 +1,9 @@
 # Manylinux web builder
 
+## Architecture
+
+[[/docs/images/builder.png|architecture]]
+
 ## First run
 
 - Create many_local image
