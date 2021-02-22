@@ -2,7 +2,7 @@
 
 ## Architecture
 
-[[/docs/images/builder.png|architecture]]
+![architecture](/docs/images/builder.png?raw=true "architecture")
 
 ## First run
 
